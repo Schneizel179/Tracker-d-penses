@@ -2,50 +2,82 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Tracker Dépenses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tracker de dépenses - Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>💰 Mon Tracker de Dépenses</h1>
-        
-        <div class="dashboard">
-            <div class="card">
-                <h2>Total ce mois</h2>
-                <p id="total-mois" class="amount">0,00 €</p>
-            </div>
+<div class="container">
+    <h1>💰 Tracker de dépenses <span>+ catégories & historique</span></h1>
+
+    <div class="total-card">
+        <div>
+            <div class="total-label">Dépenses totales (mois actuel)</div>
+            <div class="total-amount" id="totalAmount">0,00 €</div>
         </div>
-
-        <!-- Formulaire -->
-        <form id="form-depense">
-            <input type="number" id="montant" placeholder="Montant (€)" step="0.01" required>
-            <select id="categorie" required>
-                <option value="">Catégorie</option>
-                <option value="Nourriture">🍔 Nourriture</option>
-                <option value="Transport">🚌 Transport</option>
-                <option value="Loyer">🏠 Loyer</option>
-                <option value="Loisirs">🎮 Loisirs</option>
-                <option value="Courses">🛒 Courses</option>
-                <option value="Autre">Autre</option>
-            </select>
-            <input type="date" id="date" required>
-            <input type="text" id="note" placeholder="Note (optionnel)">
-            <button type="submit">Ajouter la dépense</button>
-        </form>
-
-        <!-- Résumé par catégorie -->
-        <h3>Répartition</h3>
-        <div id="repartition"></div>
-
-        <!-- Liste des dépenses -->
-        <h3>Historique</h3>
-        <div id="liste-depenses"></div>
-
-        <button onclick="exporterCSV()" class="export-btn">📥 Exporter en CSV</button>
-        <button onclick="effacerTout()" class="delete-btn">🗑️ Tout effacer</button>
+        <button id="resetAllDataBtn" class="reset-btn">🗑️ Réinitialiser tout</button>
     </div>
 
-    <script src="script.js"></script>
+    <div class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>📅 Date</label>
+                <input type="date" id="expenseDate">
+            </div>
+            <div class="form-group">
+                <label>🏷️ Catégorie</label>
+                <select id="expenseCategory">
+                    <option value="Alimentation">🛒 Alimentation</option>
+                    <option value="Transport">🚗 Transport</option>
+                    <option value="Loisirs">🎬 Loisirs</option>
+                    <option value="Santé">💊 Santé</option>
+                    <option value="Logement">🏠 Logement</option>
+                    <option value="Factures">💡 Factures</option>
+                    <option value="Autre">📌 Autre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📝 Description</label>
+                <input type="text" id="expenseDesc" placeholder="Ex: Courses, essence..." maxlength="40">
+            </div>
+            <div class="form-group">
+                <label>💶 Montant (€)</label>
+                <input type="number" id="expenseAmount" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <button id="addExpenseBtn">➕ Ajouter</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <span>🔍 Filtrer par mois :</span>
+        <input type="month" id="monthFilter">
+        <select id="categoryFilter">
+            <option value="all">Toutes catégories</option>
+            <option value="Alimentation">Alimentation</option>
+            <option value="Transport">Transport</option>
+            <option value="Loisirs">Loisirs</option>
+            <option value="Santé">Santé</option>
+            <option value="Logement">Logement</option>
+            <option value="Factures">Factures</option>
+            <option value="Autre">Autre</option>
+        </select>
+        <button id="clearFiltersBtn">✖️ Réinitialiser filtres</button>
+    </div>
+
+    <div class="expenses-table-wrapper">
+        <table id="expenseTable">
+            <thead>
+                <tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Montant</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="expenseTableBody">
+                <tr class="no-data"><td colspan="5">Aucune dépense. Ajoutez-en une !</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <footer>💾 Sauvegarde automatique dans votre navigateur. Modifiez ou supprimez vos dépenses à tout moment.</footer>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
