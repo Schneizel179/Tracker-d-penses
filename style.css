@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+.amount {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-top: 8px;
+}
+
+form {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+input, select, button {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    background: #27ae60;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background: #219653;
+}
+
+.export-btn {
+    background: #3498db;
+    color: white;
+    margin-right: 10px;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+h3 {
+    margin: 20px 0 10px;
+    color: #555;
+}
+
+#liste-depenses {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.depense {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.depense button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
