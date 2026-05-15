@@ -1,4 +1,5 @@
 let expenses = [];
+let chartInstance = null;
 
 const dateInput = document.getElementById('expenseDate');
 const categorySelect = document.getElementById('expenseCategory');
@@ -13,13 +14,14 @@ const totalSpan = document.getElementById('totalAmount');
 const tableBody = document.getElementById('expenseTableBody');
 
 function loadData() {
-    const stored = localStorage.getItem('smart_tracker_expenses');
+    const stored = localStorage.getItem('financeflow_expenses');
     if(stored) {
         expenses = JSON.parse(stored);
     } else {
+        const today = new Date().toISOString().slice(0,10);
         expenses = [
-            { id: Date.now()+1, date: new Date().toISOString().slice(0,10), category: "Alimentation", description: "Courses supermarché", amount: 58.30 },
-            { id: Date.now()+2, date: new Date().toISOString().slice(0,10), category: "Transport", description: "Ticket métro", amount: 2.10 }
+            { id: Date.now()+1, date: today, category: "Alimentation", description: "Courses supermarché", amount: 58.30 },
+            { id: Date.now()+2, date: today, category: "Transport", description: "Ticket métro", amount: 2.10 }
         ];
     }
     if(!dateInput.value) {
@@ -29,10 +31,11 @@ function loadData() {
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     if(!monthFilter.value) monthFilter.value = currentMonth;
     render();
+    updateChart();
 }
 
 function saveToLocal() {
-    localStorage.setItem('smart_tracker_expenses', JSON.stringify(expenses));
+    localStorage.setItem('financeflow_expenses', JSON.stringify(expenses));
 }
 
 function addExpense() {
@@ -55,6 +58,7 @@ function addExpense() {
     expenses.push(newExpense);
     saveToLocal();
     render();
+    updateChart();
     descInput.value = "";
     amountInput.value = "";
 }
@@ -63,6 +67,7 @@ function deleteExpense(id) {
     expenses = expenses.filter(exp => exp.id !== id);
     saveToLocal();
     render();
+    updateChart();
 }
 
 function editExpense(id) {
@@ -80,6 +85,7 @@ function editExpense(id) {
     expense.description = newDesc.trim() || expense.description;
     saveToLocal();
     render();
+    updateChart();
 }
 
 function resetAll() {
@@ -87,6 +93,7 @@ function resetAll() {
         expenses = [];
         saveToLocal();
         render();
+        updateChart();
     }
 }
 
@@ -105,8 +112,7 @@ function getFilteredExpenses() {
 
 function computeTotal() {
     const filtered = getFilteredExpenses();
-    const sum = filtered.reduce((acc, exp) => acc + exp.amount, 0);
-    return sum;
+    return filtered.reduce((acc, exp) => acc + exp.amount, 0);
 }
 
 function escapeHtml(str) {
@@ -160,17 +166,51 @@ function render() {
     });
 }
 
+function updateChart() {
+    const filtered = getFilteredExpenses();
+    const categories = ["Alimentation", "Transport", "Loisirs", "Santé", "Logement", "Factures", "Autre"];
+    const amounts = categories.map(cat => 
+        filtered.filter(exp => exp.category === cat).reduce((sum, exp) => sum + exp.amount, 0)
+    );
+    
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    if(chartInstance) {
+        chartInstance.destroy();
+    }
+    chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: amounts,
+                backgroundColor: ['#4361ee', '#f72585', '#4cc9f0', '#f8961e', '#9c27b0', '#2b9348', '#6c757d'],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { size: 11 } } },
+                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(2)} €` } }
+            }
+        }
+    });
+}
+
 function clearFilters() {
     const now = new Date();
     monthFilter.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     categoryFilter.value = 'all';
     render();
+    updateChart();
 }
 
 addBtn.addEventListener('click', addExpense);
 resetAllBtn.addEventListener('click', resetAll);
-monthFilter.addEventListener('change', () => render());
-categoryFilter.addEventListener('change', () => render());
+monthFilter.addEventListener('change', () => { render(); updateChart(); });
+categoryFilter.addEventListener('change', () => { render(); updateChart(); });
 clearFiltersBtn.addEventListener('click', clearFilters);
 amountInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') addExpense(); });
 descInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') addExpense(); });
